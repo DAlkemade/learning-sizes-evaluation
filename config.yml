@@ -1,9 +1,9 @@
 dev:
   input: "D:/GitHubD/BREDS/data_numeric/VG_YOLO_intersection_dev_annotated.csv"
   results:
-    bootstrap_no_visual_no_coref: "D:/GitHubD/BREDS/notable_runs/20200521novisualnocoref/point_predictions_bootstrapping_visual=False_coref=False.pkl"
-    bootstrap_no_visual_coref: "D:/GitHubD/BREDS/notable_runs/20200520novisualwithcoref/point_predictions_bootstrapping_visual=False_coref=True.pkl"
-    bootstrap_visual_coref: "D:/GitHubD/BREDS/notable_runs/20200521visualandcoref/point_predictions_bootstrapping_visual=True_coref=True.pkl"
+    bootstrap_no_visual_no_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=False_coref=Falsedev_thr=0.3.pkl"
+    bootstrap_no_visual_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=False_coref=Truedev_thr=0.3.pkl"
+    bootstrap_visual_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=True_coref=Truedev_thr=0.3.pkl"
     regex: "D:/GitHubD/size-comparisons/regex_predictions_dev.pkl"
 
 evaluate: "dev"

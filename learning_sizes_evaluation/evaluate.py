@@ -24,6 +24,7 @@ def precision_recall(input, point_predictions):
     res_clean = [x for x in res if x is not None]
     precision = np.mean(res_clean)
     logger.info(f'Precision: {precision}')
+    return res
 
 
 def range_distance(input, point_predictions):

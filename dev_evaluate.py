@@ -10,6 +10,7 @@ from pandas import DataFrame
 import pandas as pd
 
 from learning_sizes_evaluation.evaluate import precision_recall, range_distance
+from learning_sizes_evaluation.monte_carlo_permutation_test import permutation_test
 
 set_up_root_logger(f'DEV', os.path.join(os.getcwd(), 'logs'))
 
@@ -23,13 +24,27 @@ def main():
     paths = cfg[cfg.evaluate]
     input: DataFrame = pd.read_csv(paths.input)
     input = input.astype({'object': str})
+    input_large = input[input['min'] > 1]
+    logger.info(f'Number of large objects in input: {len(input_large.index)}')
+    predictions_correct = dict()
     for k, v in paths.results.items():
         with open(v, 'rb') as f:
             predictions = pickle.load(f)
             # predictions['nan'] = predictions[float('nan')]
         logger.info(f'\nResults for {k}')
-        precision_recall(input, predictions)
+        logger.info(f'Loaded results: {v}')
+        predictions_correct[k] = precision_recall(input, predictions)
         range_distance(input, predictions)
+
+        logger.info('Results on large objects')
+        precision_recall(input_large, predictions)
+
+    for k1 in paths.results.keys():
+        for k2 in paths.results.keys():
+            predictions_correct1 = [p is True for p in predictions_correct[k1]]
+            predictions_correct2 = [p is True for p in predictions_correct[k2]]
+            p = permutation_test(predictions_correct1, predictions_correct2)
+            logger.info(f'p-value {p} for {k1} {k2}')
 
 
 
