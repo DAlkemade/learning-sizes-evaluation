@@ -12,7 +12,6 @@ def precision_recall(input, point_predictions):
         max = row['max']
         object = row['object']
         pred_size = point_predictions[object]
-        logger.debug(f'pred: {pred_size} (type {type(pred_size)}) min: {min} max: {max}')
         if pred_size is not None:
             correct = max > pred_size > min
         else:
@@ -34,7 +33,6 @@ def range_distance(input, point_predictions):
         maximum = row['max']
         object = row['object']
         pred_size = point_predictions[object]
-        logger.debug(f'pred: {pred_size} (type {type(pred_size)}) min: {minimum} max: {maximum}')
         if pred_size is not None:
             correct = maximum > pred_size > minimum
             if correct:
