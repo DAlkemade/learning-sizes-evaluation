@@ -5,6 +5,20 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+def coverage_accuracy(golds, preds):
+    total_n = len(golds)
+    answered_count = 0
+    correct_count = 0
+    for i, gold in enumerate(golds):
+        pred = preds[i]
+        if pred is not None:
+            answered_count += 1
+            if pred == gold:
+                correct_count += 1
+    coverage = answered_count / total_n
+    accuracy = correct_count / answered_count
+    return coverage, accuracy
+
 def precision_recall(input, point_predictions):
     res = []
     for _, row in input.iterrows():
