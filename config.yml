@@ -4,6 +4,7 @@ dev:
     bootstrap_no_visual_no_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=False_coref=Falsedev_thr=0.3.pkl"
     bootstrap_no_visual_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=False_coref=Truedev_thr=0.3.pkl"
     bootstrap_visual_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=True_coref=Truedev_thr=0.3.pkl"
+    bootstrap_visual_no_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=True_coref=Falsedev_thr=0.3.pkl"
     regex: "D:/GitHubD/size-comparisons/regex_predictions_dev.pkl"
 
 evaluate: "dev"

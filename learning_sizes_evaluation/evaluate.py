@@ -1,11 +1,12 @@
 import logging
+from collections import namedtuple
 
 import numpy as np
 
 logger = logging.getLogger(__name__)
 
 
-def coverage_accuracy(golds, preds):
+def coverage_accuracy_relational(golds, preds):
     total_n = len(golds)
     answered_count = 0
     correct_count = 0
@@ -20,6 +21,18 @@ def coverage_accuracy(golds, preds):
     return coverage, accuracy
 
 def precision_recall(input, point_predictions):
+    res = check_preds(input, point_predictions)
+    nan_count = sum([x is None for x in res])
+    logger.info(f'Number of nans: {nan_count}')
+    recall = 1 - (nan_count / len(res))
+    logger.info(f'Recall: {recall}')
+    res_clean = [x for x in res if x is not None]
+    precision = np.mean(res_clean)
+    logger.info(f'Precision: {precision}')
+    return precision, recall
+
+
+def check_preds(input, point_predictions):
     res = []
     for _, row in input.iterrows():
         min = row['min']
@@ -31,12 +44,6 @@ def precision_recall(input, point_predictions):
         else:
             correct = None
         res.append(correct)
-    nan_count = sum([x is None for x in res])
-    logger.info(f'Number of nans: {nan_count}')
-    logger.info(f'Recall: {1 - (nan_count / len(res))}')
-    res_clean = [x for x in res if x is not None]
-    precision = np.mean(res_clean)
-    logger.info(f'Precision: {precision}')
     return res
 
 
@@ -63,8 +70,13 @@ def range_distance(input, point_predictions):
     distances_nonzero = [d for d in distances if d > 0]
     distances_nonzero_squared = [d ** 2 for d in distances_nonzero]
 
+    dist_mean = np.mean(distances)
+    dist_median = np.median(distances_nonzero)
+    dist_mean_squared = np.mean(distances_squared)
+    logger.info(f'Mean distance: {dist_mean}')
+    logger.info(f'Median distance FOR INCORRECT: {dist_median}')
+    logger.info(f'Mean distance squared: {dist_mean_squared}')
+    return dist_mean, dist_mean_squared, dist_median
 
-    logger.info(f'Mean distance: {np.mean(distances)}')
-    logger.info(f'Median distance FOR INCORRECT: {np.median(distances_nonzero)}')
-    logger.info(f'Mean distance squared: {np.mean(distances_squared)}')
-    logger.info(f'Median distance squared FOR INCORRECT: {np.median(distances_nonzero_squared)}')
+
+Result = namedtuple('Result', ['system','selectivity','coverage','mean_distance', 'mean_distance_squared','median_distance'])
