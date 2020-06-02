@@ -108,7 +108,7 @@ def distances_hist(distances_results, keys, save=False):
     plt.hist(comp, bins, label=keys)
     plt.legend(loc='upper right')
     ax.set_xscale('symlog')
-    plt.xlabel('Distance')
+    plt.xlabel('Distance [m]')
     if save:
         plt.savefig('distances_hist.png')
     plt.show()
