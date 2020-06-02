@@ -6,5 +6,8 @@ dev:
     bootstrap_visual_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=True_coref=Truedev_thr=0.3.pkl"
     bootstrap_visual_no_coref: "D:/GitHubD/BREDS/notable_runs/runs_with_threshold/point_predictions_bootstrapping_visual=True_coref=Falsedev_thr=0.3.pkl"
     regex: "D:/GitHubD/size-comparisons/regex_predictions_dev.pkl"
+    visual_ranges_evenly: "D:/GitHubD/BREDS/notable_runs/visual_ranges/point_predictions_visual_ranges_evenly.pkl"
+    visual_ranges_not_evenly: "D:/GitHubD/BREDS/notable_runs/visual_ranges/point_predictions_visual_ranges.pkl"
+    visual_ranges_svm: "D:/GitHubD/BREDS/notable_runs/visual_ranges/point_predictions_visual_ranges_svm.pkl"
 
 evaluate: "dev"

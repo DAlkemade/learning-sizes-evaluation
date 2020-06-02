@@ -1,7 +1,10 @@
 import logging
+import math
 from collections import namedtuple
 
 import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.scale import SymmetricalLogTransform
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +20,8 @@ def coverage_accuracy_relational(golds, preds):
             if pred == gold:
                 correct_count += 1
     coverage = answered_count / total_n
-    accuracy = correct_count / answered_count
-    return coverage, accuracy
+    selectivity = correct_count / answered_count
+    return coverage, selectivity
 
 def precision_recall(input, point_predictions):
     res = check_preds(input, point_predictions)
@@ -48,6 +51,23 @@ def check_preds(input, point_predictions):
 
 
 def range_distance(input, point_predictions):
+    distances = get_distances(input, point_predictions)
+
+    distances_squared = [d ** 2 for d in distances]
+
+    distances_nonzero = [d for d in distances if d > 0]
+    distances_nonzero_squared = [d ** 2 for d in distances_nonzero]
+
+    dist_mean = np.mean(distances)
+    dist_median = np.median(distances_nonzero)
+    dist_mean_squared = np.mean(distances_squared)
+    logger.info(f'Mean distance: {dist_mean}')
+    logger.info(f'Median distance FOR INCORRECT: {dist_median}')
+    logger.info(f'Mean distance squared: {dist_mean_squared}')
+    return dist_mean, dist_mean_squared, dist_median
+
+
+def get_distances(input, point_predictions):
     distances = []
     for _, row in input.iterrows():
         minimum = row['min']
@@ -64,19 +84,30 @@ def range_distance(input, point_predictions):
                 distance = min(distance_to_min, distance_to_max)
 
             distances.append(distance)
-
-    distances_squared = [d ** 2 for d in distances]
-
-    distances_nonzero = [d for d in distances if d > 0]
-    distances_nonzero_squared = [d ** 2 for d in distances_nonzero]
-
-    dist_mean = np.mean(distances)
-    dist_median = np.median(distances_nonzero)
-    dist_mean_squared = np.mean(distances_squared)
-    logger.info(f'Mean distance: {dist_mean}')
-    logger.info(f'Median distance FOR INCORRECT: {dist_median}')
-    logger.info(f'Mean distance squared: {dist_mean_squared}')
-    return dist_mean, dist_mean_squared, dist_median
+    return distances
 
 
 Result = namedtuple('Result', ['system','selectivity','coverage','mean_distance', 'mean_distance_squared','median_distance'])
+RelationalResult = namedtuple('RelationalResult', ['system','selectivity','coverage'])
+
+def distances_hist(distances_results, keys, save=False):
+    maximums = []
+    comp = []
+    for k in keys:
+        distances = distances_results[k]
+        comp.append(distances)
+        maximums.append(max(distances))
+    max_power = math.ceil(math.log10(max(maximums)))
+    # bins = np.logspace(0,max_power, 30)
+    tr = SymmetricalLogTransform(base=10, linthresh=1, linscale=1)
+    ss = tr.transform([0., max(maximums)+1])
+    bins = tr.inverted().transform(np.linspace(*ss, num=30))
+    plt.style.use('seaborn-deep')
+
+    fig, ax = plt.subplots()
+    plt.hist(comp, bins, label=keys)
+    plt.legend(loc='upper right')
+    ax.set_xscale('symlog')
+    if save:
+        plt.savefig('distances_hist.png')
+    plt.show()
