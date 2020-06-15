@@ -9,7 +9,7 @@ from matplotlib.scale import SymmetricalLogTransform
 logger = logging.getLogger(__name__)
 
 
-def coverage_accuracy_relational(golds, preds):
+def coverage_accuracy_relational(golds, preds, notes = None):
     total_n = len(golds)
     answered_count = 0
     correct_count = 0
@@ -19,6 +19,8 @@ def coverage_accuracy_relational(golds, preds):
             answered_count += 1
             if pred == gold:
                 correct_count += 1
+            else:
+                logger.info(f'Incorrect: {notes[i]}')
     coverage = answered_count / total_n
     selectivity = correct_count / answered_count
     return coverage, selectivity
@@ -97,8 +99,6 @@ def distances_hist(distances_results, keys, save=False):
         distances = distances_results[k]
         comp.append(distances)
         maximums.append(max(distances))
-    max_power = math.ceil(math.log10(max(maximums)))
-    # bins = np.logspace(0,max_power, 30)
     tr = SymmetricalLogTransform(base=10, linthresh=1, linscale=1)
     ss = tr.transform([0., max(maximums)+1])
     bins = tr.inverted().transform(np.linspace(*ss, num=30))
