@@ -19,6 +19,8 @@ def coverage_accuracy_relational(golds, preds, notes = None):
             answered_count += 1
             if pred == gold:
                 correct_count += 1
+                if notes is not None:
+                    logger.info(f'Correct: {notes[i]}')
             else:
                 if notes is not None:
                     logger.info(f'Incorrect: {notes[i]}')
