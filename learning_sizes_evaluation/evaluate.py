@@ -20,7 +20,8 @@ def coverage_accuracy_relational(golds, preds, notes = None):
             if pred == gold:
                 correct_count += 1
             else:
-                logger.info(f'Incorrect: {notes[i]}')
+                if notes is not None:
+                    logger.info(f'Incorrect: {notes[i]}')
     coverage = answered_count / total_n
     selectivity = correct_count / answered_count
     return coverage, selectivity
