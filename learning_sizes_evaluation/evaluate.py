@@ -1,5 +1,4 @@
 import logging
-import math
 from collections import namedtuple
 
 import numpy as np
@@ -9,7 +8,8 @@ from matplotlib.scale import SymmetricalLogTransform
 logger = logging.getLogger(__name__)
 
 
-def coverage_accuracy_relational(golds, preds, notes = None):
+def coverage_accuracy_relational(golds, preds, notes=None):
+    """Compute coverage and selectivity for a comparison task."""
     total_n = len(golds)
     answered_count = 0
     correct_count = 0
@@ -28,19 +28,22 @@ def coverage_accuracy_relational(golds, preds, notes = None):
     selectivity = correct_count / answered_count
     return coverage, selectivity
 
+
 def precision_recall(input, point_predictions):
+    """Compute coverage and selectivity."""
     res = check_preds(input, point_predictions)
     nan_count = sum([x is None for x in res])
     logger.info(f'Number of nans: {nan_count}')
-    recall = 1 - (nan_count / len(res))
-    logger.info(f'Recall: {recall}')
+    coverage = 1 - (nan_count / len(res))
+    logger.info(f'coverage: {coverage}')
     res_clean = [x for x in res if x is not None]
-    precision = np.mean(res_clean)
-    logger.info(f'Precision: {precision}')
-    return precision, recall
+    selectivity = np.mean(res_clean)
+    logger.info(f'selectivity: {selectivity}')
+    return selectivity, coverage
 
 
 def check_preds(input, point_predictions):
+    """Check whether predictions are correct."""
     res = []
     for _, row in input.iterrows():
         min = row['min']
@@ -56,6 +59,7 @@ def check_preds(input, point_predictions):
 
 
 def range_distance(input, point_predictions):
+    """Compute statistics for error distances"""
     distances = get_distances(input, point_predictions)
 
     distances_squared = [d ** 2 for d in distances]
@@ -73,6 +77,7 @@ def range_distance(input, point_predictions):
 
 
 def get_distances(input, point_predictions):
+    """Compute error distances (i.e. distance to correct range)"""
     distances = []
     for _, row in input.iterrows():
         minimum = row['min']
@@ -92,10 +97,13 @@ def get_distances(input, point_predictions):
     return distances
 
 
-Result = namedtuple('Result', ['system','selectivity','coverage','mean_distance', 'mean_distance_squared','median_distance'])
-RelationalResult = namedtuple('RelationalResult', ['system','selectivity','coverage'])
+Result = namedtuple('Result',
+                    ['system', 'selectivity', 'coverage', 'mean_distance', 'mean_distance_squared', 'median_distance'])
+RelationalResult = namedtuple('RelationalResult', ['system', 'selectivity', 'coverage'])
+
 
 def distances_hist(distances_results, keys, save=False):
+    """Plot a histogram of error distances."""
     maximums = []
     comp = []
     for k in keys:
@@ -103,7 +111,7 @@ def distances_hist(distances_results, keys, save=False):
         comp.append(distances)
         maximums.append(max(distances))
     tr = SymmetricalLogTransform(base=10, linthresh=1, linscale=1)
-    ss = tr.transform([0., max(maximums)+1])
+    ss = tr.transform([0., max(maximums) + 1])
     bins = tr.inverted().transform(np.linspace(*ss, num=30))
     plt.style.use('seaborn-deep')
 

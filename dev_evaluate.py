@@ -1,16 +1,12 @@
 import logging
-import math
 import os
 import pickle
 
+import pandas as pd
 import yaml
 from box import Box
 from logging_setup_dla.logging import set_up_root_logger
-from matplotlib import pyplot as plt
-from matplotlib.scale import SymmetricalLogTransform
 from pandas import DataFrame
-import pandas as pd
-import numpy as np
 
 from learning_sizes_evaluation.evaluate import precision_recall, range_distance, check_preds, Result, get_distances, \
     distances_hist
@@ -22,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    """Show an evaluation of results on the development set."""
     with open("config.yml", "r") as ymlfile:
         cfg = Box(yaml.safe_load(ymlfile))
 
@@ -46,11 +43,8 @@ def main():
 
         distances_results[k] = get_distances(input, predictions)
 
-
-
     results_df = pd.DataFrame(results)
     results_df.to_csv('results_dev.csv')
-
 
     distances_hist(distances_results, ['regex', 'bootstrap_no_visual_no_coref'])
     distances_hist(distances_results, ['bootstrap_no_visual_coref', 'bootstrap_no_visual_no_coref'])
